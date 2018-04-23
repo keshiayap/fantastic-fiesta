@@ -41,7 +41,7 @@ class GameScene : public QGraphicsScene
     void jump(QGraphicsSceneMouseEvent *event);
     bool checkMoveKing(QGraphicsSceneMouseEvent *event);
     Pawn* checkJumpKing(QGraphicsSceneMouseEvent *event);
-    bool itemIsKing(QGraphicsSceneMouseEvent *event);
+    bool pawnIsKing();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

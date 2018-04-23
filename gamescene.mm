@@ -140,15 +140,15 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             }
         }
     //Pawn is selected
-    else if (itemIsKing(event)) {
+    else if (pawnIsKing()) {
         if (checkMoveKing(event)) {
             move(event);
             return;
         }
         else if (checkJumpKing(event) != NULL){
             Pawn* eaten = checkJumpKing(event);
-            jump(event);
             removeItem(eaten->pawn);
+            jump(event);
             return;
         }
     }
@@ -160,8 +160,8 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         //Jump
         else if (checkJump(event) != NULL){
             Pawn* eaten = checkJump(event);
-            jump(event);
             removeItem(eaten->pawn);
+            jump(event);
             return;
         }
         else {
@@ -175,7 +175,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 //Deselect pawn
 void GameScene::ResetPawn()
 {
-    CheckIfKing();
+    CheckIfKing(); //Check if there's any pawn reaching the other side
     this->currentlySelectedPawn->setPen(this->outlinePen4Pawn);
     this->isPawnSelected = false;
     this->currentlySelectedPawn = NULL;
@@ -184,22 +184,26 @@ void GameScene::ResetPawn()
 
 void GameScene::CheckIfKing()
 {
-        for(int i = 0 ; i < whitePawnsList.size() ; ++i)
+        for(int i = 0 ; i < whitePawnsList.size() ; i++)
         {
             if(this->currentlySelectedPawn->scenePos().y() == 0
                && this->currentlySelectedPawn->scenePos() == whitePawnsList.at(i)->pawn->scenePos())
             {
-                if (this->whitePawnsList.at(i)->isKing) { return; }
+                if (this->whitePawnsList.at(i)->isKing) {
+                    return;
+                }
                 this->whitePawnsList.at(i)->isKing = true;
                 this->whitePawnsList.at(i)->pawn->setBrush(this->whiteKingBrush);
             }
         }
-        for(int i = 0 ; i < blackPawnsList.size() ; ++i)
+        for(int i = 0 ; i < blackPawnsList.size() ; i++)
         {
             if(this->currentlySelectedPawn->scenePos().y() == 7*ELEMENTSIZE
                && this->currentlySelectedPawn->scenePos() == blackPawnsList.at(i)->pawn->scenePos())
             {
-                if (this->blackPawnsList.at(i)->isKing) { return; }
+                if (this->blackPawnsList.at(i)->isKing) {
+                    return;
+                }
                 this->blackPawnsList.at(i)->isKing = true;
                 this->blackPawnsList.at(i)->pawn->setBrush(this->blackKingBrush);
             }
@@ -214,16 +218,14 @@ bool GameScene::checkMove(QGraphicsSceneMouseEvent *event){
     //Not a field
     if (item->type() != rectType.type())
             return false;
-    else {
+    /*else {
         //There's a pawn in the field
-        /*for (int i = 0 ; i < blackPawnsList.size() ; i++) {
-            if ( ((blackPawnsList.at(i)->pawn->x() == item->x())
-                 && (blackPawnsList.at(i)->pawn->y() == item->y()))
-                 || ((whitePawnsList.at(i)->pawn->x() == item->x())
-                 && (whitePawnsList.at(i)->pawn->y() == item->y())))
-                return false;*/
+        for (int i = 0 ; i < blackPawnsList.size() ; i++) {
+            if ((blackPawnsList.at(i)->pawn->scenePos() == item->scenePos())
+                 || (whitePawnsList.at(i)->pawn->scenePos() == item->scenePos()))
+                return false;
 
-    }
+    }*/
     if (this->whitePlayerMove) {
         //If it's a valid nearbyfield
         if (((item->x() - this->currentlySelectedPawn->x() == ELEMENTSIZE)
@@ -323,15 +325,15 @@ Pawn* GameScene::checkJumpKing(QGraphicsSceneMouseEvent *event){
     QGraphicsItem *item = itemAt(event->scenePos(), QTransform::fromScale(1, 1));
     QGraphicsRectItem rectType;
     QGraphicsEllipseItem ellipseType;
-    if (checkJump(event) == NULL)
-            return NULL;
+    if (checkJump(event) != NULL)
+            return checkJump(event);
     if(this->whitePlayerMove){
     //There's a black pawn up & right
         if  ((item->x() - this->currentlySelectedPawn->x() == DISTANCE)
                   && (this->currentlySelectedPawn->y() - item->y()  == -DISTANCE)){
             for (int i = 0 ; i < blackPawnsList.size() ; i++) {
                 if ( (blackPawnsList.at(i)->pawn->x() == this->currentlySelectedPawn->x()+ELEMENTSIZE)
-                     && (blackPawnsList.at(i)->pawn->y() == this->currentlySelectedPawn->y()-ELEMENTSIZE))
+                     && (blackPawnsList.at(i)->pawn->y() == this->currentlySelectedPawn->y()+ELEMENTSIZE))
                     return blackPawnsList.at(i);
             }
         }
@@ -339,7 +341,7 @@ Pawn* GameScene::checkJumpKing(QGraphicsSceneMouseEvent *event){
                  && (this->currentlySelectedPawn->y() - item->y()  == -DISTANCE)){
            for (int i = 0 ; i < blackPawnsList.size() ; i++) {
                if ( (blackPawnsList.at(i)->pawn->x() == this->currentlySelectedPawn->x()-ELEMENTSIZE)
-                    && (blackPawnsList.at(i)->pawn->y() == this->currentlySelectedPawn->y()-ELEMENTSIZE))
+                    && (blackPawnsList.at(i)->pawn->y() == this->currentlySelectedPawn->y()+ELEMENTSIZE))
                    return blackPawnsList.at(i);
            }
         }
@@ -351,7 +353,7 @@ Pawn* GameScene::checkJumpKing(QGraphicsSceneMouseEvent *event){
                   && (this->currentlySelectedPawn->y() - item->y()  == DISTANCE)){
             for (int j = 0 ; j < whitePawnsList.size() ; j++) {
                 if ( (whitePawnsList.at(j)->pawn->x() == this->currentlySelectedPawn->x()+ELEMENTSIZE)
-                     && (whitePawnsList.at(j)->pawn->y() == this->currentlySelectedPawn->y()+ELEMENTSIZE))
+                     && (whitePawnsList.at(j)->pawn->y() == this->currentlySelectedPawn->y()-ELEMENTSIZE))
                     return whitePawnsList.at(j);
             }
         }
@@ -360,7 +362,7 @@ Pawn* GameScene::checkJumpKing(QGraphicsSceneMouseEvent *event){
                  && (this->currentlySelectedPawn->y() - item->y()  == DISTANCE)) {
            for (int j = 0 ; j < whitePawnsList.size() ; j++) {
                if ( whitePawnsList.at(j)->pawn->x() == this->currentlySelectedPawn->x()-ELEMENTSIZE
-                    && whitePawnsList.at(j)->pawn->y() == this->currentlySelectedPawn->y()+ELEMENTSIZE)
+                    && whitePawnsList.at(j)->pawn->y() == this->currentlySelectedPawn->y()-ELEMENTSIZE)
                    return whitePawnsList.at(j);
            }
        }
@@ -386,23 +388,20 @@ void GameScene::jump(QGraphicsSceneMouseEvent *event){
 }
 
 //Check if it's King
-bool GameScene::itemIsKing(QGraphicsSceneMouseEvent *event){
-    QGraphicsItem *item = itemAt(event->scenePos(), QTransform::fromScale(1, 1));
+bool GameScene::pawnIsKing(){
     if(this->whitePlayerMove){
-        for (int i = 0 ; i < blackPawnsList.size() ; i++) {
-            if (blackPawnsList.at(i)->isKing){
-                if ( ((blackPawnsList.at(i)->pawn->x() == item->x())
-                    && (blackPawnsList.at(i)->pawn->y() == item->y())))
+        for (int i = 0 ; i < whitePawnsList.size() ; i++) {
+            if (whitePawnsList.at(i)->pawn->scenePos() == this->currentlySelectedPawn->scenePos()){
+                if (whitePawnsList.at(i)->isKing)
                     return true;
             }
         }
     }
         //Black's turn
      else {
-        for (int i = 0 ; i < whitePawnsList.size() ; i++) {
-            if (whitePawnsList.at(i)->isKing){
-                if ( ((whitePawnsList.at(i)->pawn->x() == item->x())
-                    && (whitePawnsList.at(i)->pawn->y() == item->y())))
+        for (int i = 0 ; i < blackPawnsList.size() ; i++) {
+            if (blackPawnsList.at(i)->pawn->scenePos() == this->currentlySelectedPawn->scenePos()){
+                if (blackPawnsList.at(i)->isKing)
                     return true;
             }
         }
