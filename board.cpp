@@ -1,19 +1,20 @@
+#include <iostream>
 using namespace std;
 
-class Coordinate {
+typedef struct Coordinate {
   int row;
   int col;
+} Coordinate;
 
-  int atLeft(); // at left edge
-  int atRight(); // at right edge
-  int atEnd(); // reached other end of board
-}
-  
+// int atLeft(); // at left edge
+// int atRight(); // at right edge
+// int atEnd(); // reached other end of board
+
 class Board {
   int COMPUTER; int USER; // # of pieces at start of a game
   char board[8][8];
 
-  void updateBoard(Coordinate current, Coordinate next, char turn);
+  void updateBoard(Coordinate current, Coordinate next, char turn, bool jump);
   void flip(); // reverse direction (change turn)
   Board(); // construct new board
   int count(char turn); // count number of C(omputer) or U(ser) pieces left on the board
@@ -21,23 +22,23 @@ class Board {
   
 };
 
-void updateBoard(Coordinate curr, Coordinate next, char turn, bool jump) {
+void Board::updateBoard(Coordinate curr, Coordinate next, char turn, bool jump) {
   // must check if turn is legit first somewhere else
   if (jump) {
-    int enemyR = (curr->row + next->row)/2;
-    int enemyC = (curr->col + next->col)/2;
+    int enemyR = (curr.row + next.row)/2;
+    int enemyC = (curr.col + next.col)/2;
     this -> board[enemyR][enemyC] = '-'; // die
     if (turn == 'C')
-      COMPUTER--;
+      this->COMPUTER--;
     else
-      USER--;
+      this->USER--;
   }
-  this -> board[next->row][next->col] = turn;
-  this -> board[curr->row][curr->col] = '-';
+  this -> board[next.row][next.col] = turn;
+  this -> board[curr.row][curr.col] = '-';
 }
 
 // reverse direction (change turn)
-void flip() {
+void Board::flip() {
   char tempBoard[4][8];
   // flip and copy top half of board to temp
   for (int i = 0; i < 4; i++) {
@@ -59,9 +60,9 @@ void flip() {
 }
 
 // construct new board, computer starts first
-Board() {
-  int COMPUTER::12;
-  int USER::12;
+Board::Board() {
+  this->COMPUTER = 12;
+  this->USER = 12;
 
   // initialize all as '-'
   for (int i = 0; i < 8; i++) { 
@@ -81,7 +82,7 @@ Board() {
   }
 
   // initialize computer pieces
-  bool skip = false;
+  skip = false;
   for (int i = 5; i < 8; i++) { 
     for(int j = 0; j < 8; j++) {
       if (!skip)
@@ -93,7 +94,7 @@ Board() {
 }
 
 // count number of C(omputer) or U(ser) pieces left on the board
-int count(char turn) {
+int Board::count(char turn) {
   int number = 0;
   for (int i = 0; i < 8; i++) {
     for(int j = 0; j < 8; j++) {
@@ -105,11 +106,17 @@ int count(char turn) {
 }
 
 // print to stdout
-void toString() {
+void Board::toString() {
   for (int i=0; i < 8; i++) {
     for (int j = 0; j < 8; j++) {
       cout << this->board[i][j] << endl;
     }
     cout << '\n' << endl;
   }
+}
+
+int main() {
+  char board[8][8] = new Board();
+  board.toString();
+  return 0;
 }
