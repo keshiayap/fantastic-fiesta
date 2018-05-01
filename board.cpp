@@ -11,9 +11,9 @@ typedef struct Coordinate {
 // int atEnd(); // reached other end of board
 
 class Board {
+public:
   int COMPUTER; int USER; // # of pieces at start of a game
   char board[8][8];
-
   void updateBoard(Coordinate current, Coordinate next, char turn, bool jump);
   void flip(); // reverse direction (change turn)
   Board(); // construct new board
@@ -93,30 +93,18 @@ Board::Board() {
   }
 }
 
-// count number of C(omputer) or U(ser) pieces left on the board
-int Board::count(char turn) {
-  int number = 0;
-  for (int i = 0; i < 8; i++) {
-    for(int j = 0; j < 8; j++) {
-      if (this->board[i][j] = turn)
-	number++;
-    }
-  }
-  
-}
-
 // print to stdout
 void Board::toString() {
   for (int i=0; i < 8; i++) {
     for (int j = 0; j < 8; j++) {
-      cout << this->board[i][j] << endl;
+      cout << this->board[i][j];
     }
-    cout << '\n' << endl;
+    cout << endl;
   }
 }
 
 int main() {
-  char board[8][8] = new Board();
+  Board board;
   board.toString();
   return 0;
 }
