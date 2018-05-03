@@ -66,7 +66,6 @@ bool canJump(int player, int r1, int r1, int c2, int c2) {
 struct coordinate* getMoves(int player) {
     struct coordinate* list[1024]; //size arbitrarily big?
     int i = 0;
-    int jump = 0;
     // possible jumps
     for (int row = 0; row < 8; row++) {
         for (int col = 0; col < 8; col++){
@@ -93,11 +92,9 @@ struct coordinate* getMoves(int player) {
                 }
             }
         }
-        jump = 1;
     }
 
     // possible moves
-    if (jump == 0) {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++){
                 if (board[row][col] == player) {
@@ -124,6 +121,5 @@ struct coordinate* getMoves(int player) {
                 }
             }
         }
-    }
     return list;
 }
