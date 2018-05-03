@@ -125,4 +125,5 @@ struct coordinate* getMoves(int player) {
             }
         }
     }
+    return list;
 }
