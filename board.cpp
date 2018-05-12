@@ -1,28 +1,6 @@
-#include <iostream>
-using namespace std;
+#include "log.h"
 
-typedef struct Coordinate {
-  int row;
-  int col;
-} Coordinate;
-
-// int atLeft(); // at left edge
-// int atRight(); // at right edge
-// int atEnd(); // reached other end of board
-
-class Board {
-public:
-  int COMPUTER; int USER; // # of pieces at start of a game
-  char board[8][8];
-  void updateBoard(Coordinate current, Coordinate next, char turn, bool jump);
-  void flip(); // reverse direction (change turn)
-  Board(); // construct new board
-  int count(char turn); // count number of C(omputer) or U(ser) pieces left on the board
-  void toString(); // print to stdout
-  
-};
-
-void Board::updateBoard(Coordinate curr, Coordinate next, char turn, bool jump) {
+void Board::updateBoard(coordinate curr, coordinate next, char turn, bool jump) {
   // must check if turn is legit first somewhere else
   if (jump) {
     int enemyR = (curr.row + next.row)/2;
@@ -63,7 +41,7 @@ void Board::flip() {
 Board::Board() {
   this->COMPUTER = 12;
   this->USER = 12;
-
+  
   // initialize all as '-'
   for (int i = 0; i < 8; i++) { 
     for(int j = 0; j < 8; j++) 
@@ -74,8 +52,10 @@ Board::Board() {
   bool skip = true;
   for (int i = 0; i < 3; i++) { 
     for(int j = 0; j < 8; j++) {
-      if (!skip)
-	this->board[i][j] = 'U';
+      if (!skip) {
+	this->board[i][j] = 'c';
+	//add coordinate to userList
+      }
       skip = !skip;
     }
     skip = !skip;
@@ -85,8 +65,10 @@ Board::Board() {
   skip = false;
   for (int i = 5; i < 8; i++) { 
     for(int j = 0; j < 8; j++) {
-      if (!skip)
-	this->board[i][j] = 'C';
+      if (!skip) {
+	this->board[i][j] = 'u';
+	//add coordinate to compList
+      }
       skip = !skip;
     }
     skip = !skip;
