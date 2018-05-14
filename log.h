@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
+#include <random>
 
 using namespace std;
 #define C 1
@@ -49,18 +50,23 @@ typedef struct Node {
 
 // move functions
 void check_null(void *ptr, char *msg);
+bool isEmpty(void *ptr);
 coordinate init(int a, int b);
 coordinate *buildMove(int r1, int c1, int r2, int c2);
 bool canMove(int player, int r1, int c1, int r2, int c2);
 bool canJump(int player, int r1, int c1, int r2, int c2);
 coordinate **getMoves(int player);
 coordinate **getJumps(int player);
-coordinate getPiece(coordinate *move);
-coordinate getDest(coordinate *move);
 
 // node functions
 Node *init_node(); // initialize tree node
 void free_tree(Node *t); // free mallocs
 void print_tree(Node *t); // prints tree using preorder traversal (for checking)
+
+// intelligence functions
+coordinate *makeRandomMove(Board board, char player);
+Node *buildTree(Board board, coordinate *move, int depth, char player, bool jump);
+int minimax(Node *t, int depth, bool isMaximizingPlayer, int alpha, int beta, coordinate *bestMove);
+
 
 #endif

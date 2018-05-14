@@ -1,13 +1,10 @@
 all : main
 
-log.o: board.mm checkmove.mm node.mm log.h
-	g++ -c board.mm checkmove.mm node.mm log.h
+log.o: board.cpp checkmove.cpp node.cpp ai.cpp
+	g++ -c board.cpp checkmove.cpp node.cpp ai.cpp
 
-ai.o: ai.mm log.h
-	g++ -c ai.mm log.h
-
-main: ai.o log.o
-	g++ -std=c++0x -Wall -o main main ai.o log.o
+main: log.o main.cpp
+	g++ -std=c++0x -Wall -o main main.cpp log.o
 
 clean:
-	rm log.o ai.o main
+	rm log.o main.o main
