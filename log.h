@@ -9,10 +9,12 @@
 #include <limits.h>
 #include <string.h>
 
+using namespace std;
 #define C 1
 #define U 0
+#define MAX = numeric_limits<int>::max();
+#define MIN = numeric_limits<int>::min();
 
-using namespace std;
 
 class Board {
  public:
@@ -59,6 +61,7 @@ coordinate getDest(coordinate *move);
 typedef struct Node {
   Board board;
   struct Node *children; // array of either pieces that can jump (preferred), or just move
+  int numChildren;
   int depth;
   int alpha;
   int beta;

@@ -2,8 +2,10 @@
 
 // construct new board, computer starts first
 Board::Board() {
-  this->COMPUTER = 12;
-  this->USER = 12;
+  // store values of pieces for each player
+  // normal pieces worth 3 units, kings worth 5
+  this->COMPUTER = 12 * 3;
+  this->USER = 12 * 3;
   
   // initialize all as '-'
   for (int i = 0; i < 8; i++) { 
@@ -59,13 +61,19 @@ void Board::updateBoard(coordinate curr, coordinate next, char player, bool jump
   if (jump) {
     int enemyR = (curr.row + next.row)/2;
     int enemyC = (curr.col + next.col)/2;
+    
+    int enemyPieceValue = 3; // assume normal piece was destroyed
+    if (isupper(board[enemyR][enemyC])
+	enemyPieceValue = 5; // king was destroyed
+	
     this -> board[enemyR][enemyC] = '-'; // die
-    if ((char) tolower(player) == 'u') // enemy loses one piece
-      this->COMPUTER--;
+    if (tolower(player) == 'u') // enemy loses one piece
+      this->COMPUTER-enemyPieceValue;
     else
-      this->USER--;
+      this->USER-enemyPieceValue;
   }
-  // simply shift position of piece
+    
+  // shift position of piece
   this -> board[next.row][next.col] = this->board[curr.row][curr.col];
   this -> board[curr.row][curr.col] = '-';
 }
