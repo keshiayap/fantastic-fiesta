@@ -16,7 +16,7 @@
 class GameScene : public QGraphicsScene
 {
     QBrush whiteBrush, lightBrownBrush, blackBrush, darkBrownBrush, whiteKingBrush, blackKingBrush;
-    QPen outlinePen4Chessboard, outlinePen4Pawn, outlinePen4SelectedPawn;
+    QPen outlineChessboard, outlinePawn, outlineSelectedPawn;
     QGraphicsEllipseItem * currentlySelectedPawn;
     bool whitePlayerMove, isPawnSelected, isDuringMove;
     QList<QGraphicsRectItem *> whiteFieldsList, blackFieldsList;
@@ -30,7 +30,7 @@ class GameScene : public QGraphicsScene
    // bool PawnChecker(int numX, int numY);
    // bool FieldChecker4King(QGraphicsSceneMouseEvent * event);
     //bool CheckIfMoveAvailable(QPointF xy, int xAdd, int yAdd, QGraphicsSceneMouseEvent *event);
-    void CheckIfKing ();
+    void CheckIfKing();
     void SetPawns(QGraphicsScene* scene);
     void SetChessboard(QGraphicsScene* scene);
     void ResetPawn();
