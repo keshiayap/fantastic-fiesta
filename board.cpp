@@ -1,5 +1,25 @@
 #include "log.h"
 
+// char[8][8] getBoard(Board *board) {
+//   return board->board;
+// }
+
+// int getC(Board *board) {
+//   return board->COMPUTER;
+// }
+
+// int getU(Board *board) {
+//   return board->USER;
+// }
+
+// void setC(Board *board, int COMPUTER) {
+//   board->COMPUTER = COMPUTER;
+// }
+
+// void setU(Board *board, int USER) {
+//   board->USER = USER;
+// }
+
 // check if mallocs were done correctly
 void check_null(void *ptr, char const *msg) {
   if (ptr == NULL) {

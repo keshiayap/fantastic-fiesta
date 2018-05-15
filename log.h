@@ -35,7 +35,13 @@ typedef struct Board {
   static int COMPUTER, USER; // # of pieces at start of a game
   static char board[8][8];
 } Board;
-  
+
+/* char[8][8] getBoard(Board *board); */
+/* int getC(Board *board); */
+/* int getU(Board *board); */
+/* void setC(Board *board, int COMPUTER); */
+/* void setU(Board *board, int USER); */
+
 // node structure for minimax tree
 typedef struct Node {
   Board *board;
