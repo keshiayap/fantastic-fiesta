@@ -63,7 +63,7 @@ Board *copyBoard(Board *board) {
 }
 
 // make a legit move
-void updateBoard(Board *board, coordinate curr, coordinate next, char player) {
+void updateBoard(Board *board, coordinate curr, coordinate next, int player) {
   bool jump = 0;
   if (curr.row - next.row == 1 || curr.row - next.col == -1)
     jump = 1;
@@ -78,7 +78,7 @@ void updateBoard(Board *board, coordinate curr, coordinate next, char player) {
       enemyPieceValue = 5; // king was destroyed
 	
     board->board[enemyR][enemyC] = '-'; // die
-    if (tolower(player) == 'u') // enemy loses one piece
+    if (player < 0) // enemy loses one piece
       board->COMPUTER -= enemyPieceValue;
     else
       board->USER -= enemyPieceValue;
@@ -124,6 +124,8 @@ void toString(Board *board) {
 	display = 'u';
       else if (board->board[i][j] == UK)
 	display = 'U';
+      else
+	display = '-';
       cout << display;
     }
     cout << endl;

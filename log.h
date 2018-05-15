@@ -12,6 +12,7 @@
 #include <string.h>
 #include <random>
 #include <limits.h>
+#include <string>
 
 using namespace std;
 #define C 1 // computer regular piece
@@ -55,7 +56,7 @@ typedef struct Node {
 void check_null(void *ptr, char const *msg);
 Board *init_board(int COMPUTER = 12*3, int USER = 12*3); // construct new board, default parameters
 Board *copyBoard(Board *board); // duplicate
-void updateBoard(Board *board, coordinate curr, coordinate next, char player);
+void updateBoard(Board *board, coordinate curr, coordinate next, int player);
 /* void flip(Board *board); // reverse direction (change turn) */
 void toString(Board *board); // print to stdout
 
@@ -72,7 +73,7 @@ void print_move(coordinate* move);
 // node.cpp functions
 Node *init_node(Board *board); // initialize tree node
 void free_tree(Node *t); // free mallocs
-void print_tree(Node *t, char *tab, int depth); // prints tree using preorder traversal (for checking)
+void print_tree(Node *t, int tab, int depth); // prints tree using preorder traversal (for checking)
 
 // ai.cpp intelligence functions
 int size(coordinate **list);

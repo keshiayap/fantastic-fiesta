@@ -12,7 +12,7 @@ node.o: node.cpp
 ai.o: ai.cpp
 	g++ -std=c++0x -Wall -c ai.cpp
 
-main.o: main_ai.cpp
+main_ai.o: main_ai.cpp
 	g++ -std=c++0x -Wall -c main_ai.cpp
 
 #main: board.cpp checkmove.cpp node.cpp ai.cpp main_ai.cpp

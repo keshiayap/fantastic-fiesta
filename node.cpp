@@ -17,7 +17,7 @@ void free_tree(Node *t) {
 }
 
 // prints tree values using inorder traversal
-void print_tree(Node *t, char *tab, int depth) {
+void print_tree(Node *t, int tab, int depth) {
   if (depth == 0) {
     cout << "Value = %d" << t->value << endl;
     toString(t->board);
@@ -28,11 +28,10 @@ void print_tree(Node *t, char *tab, int depth) {
     cout << endl;
 
     for (int i = 0; i < t->numChildren; i++) {
-      tab = strcat(tab, "Child ");
-      const char s[2] = {(char) (i+'0'), '\0'};
-      tab = strcat(tab, s);
-      tab = strcat(tab, "    ");
-      print_tree(t->children[i], tab, depth-1);
+      for (int j = 0; j < tab; i++)
+	cout << " ";
+      cout << endl;
+      print_tree(t->children[i], tab + 4, depth-1);
     }
   }
 }
