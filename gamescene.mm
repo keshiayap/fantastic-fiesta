@@ -24,6 +24,7 @@ GameScene::GameScene(QLabel * moveInfoLabel)
     this->outlinePen4Pawn.setWidth(1);
     SetChessboard(this);
     SetPawns(this);
+    changeAllowed = true;
     //Moves(itemAt(this->scenePos(), QTransform::fromScale(1, 1)),60,60);
 }
 
@@ -147,8 +148,16 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         }
         else if (checkJumpKing(event) != NULL){
             Pawn* eaten = checkJumpKing(event);
-            removeItem(eaten->pawn);
+            //removeItem(eaten->pawn);
+            eaten->dead();
             jump(event);
+            if (checkDoubleJump()){
+                changeAllowed = false;
+            }
+            else{
+                ResetPawn();
+                this->whitePlayerMove = !this->whitePlayerMove;
+            }
             return;
         }
     }
@@ -159,13 +168,23 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         }
         //Jump
         else if (checkJump(event) != NULL){
-            Pawn* eaten = checkJump(event);
-            removeItem(eaten->pawn);
+            Pawn* eaten = checkJumpKing(event);
+            //removeItem(eaten->pawn);
+            eaten->dead();
+            //eaten->pawn->setPos(ELEMENTSIZE*9, ELEMENTSIZE * 4 );
             jump(event);
+            if (checkDoubleJump()){
+                changeAllowed = false;
+            }
+            else{
+                ResetPawn();
+                this->whitePlayerMove = !this->whitePlayerMove;
+            }
             return;
         }
         else {
-            ResetPawn();
+            if (changeAllowed)
+                ResetPawn();
             return;
         }
     }
@@ -175,15 +194,16 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 //Deselect pawn
 void GameScene::ResetPawn()
 {
-    CheckIfKing(); //Check if there's any pawn reaching the other side
     this->currentlySelectedPawn->setPen(this->outlinePen4Pawn);
     this->isPawnSelected = false;
     this->currentlySelectedPawn = NULL;
     this->isDuringMove = false;
+    this->changeAllowed = true;
 }
 
 void GameScene::CheckIfKing()
 {
+    if (this->whitePlayerMove){
         for(int i = 0 ; i < whitePawnsList.size() ; i++)
         {
             if(this->currentlySelectedPawn->scenePos().y() == 0
@@ -196,6 +216,8 @@ void GameScene::CheckIfKing()
                 this->whitePawnsList.at(i)->pawn->setBrush(this->whiteKingBrush);
             }
         }
+    }
+    else {
         for(int i = 0 ; i < blackPawnsList.size() ; i++)
         {
             if(this->currentlySelectedPawn->scenePos().y() == 7*ELEMENTSIZE
@@ -208,6 +230,20 @@ void GameScene::CheckIfKing()
                 this->blackPawnsList.at(i)->pawn->setBrush(this->blackKingBrush);
             }
         }
+    }
+}
+
+bool GameScene::pawnInField(QPointF event) {
+    //QGraphicsItem *item = itemAt(event->scenePos(), QTransform::fromScale(1, 1));
+    for (int i = 0 ; i < blackPawnsList.size() ; i++) {
+        if (blackPawnsList.at(i)->isAlive && blackPawnsList.at(i)->pawn->scenePos() == event)
+            return true;
+    }
+    for (int i = 0 ; i < whitePawnsList.size() ; i++) {
+        if (whitePawnsList.at(i)->isAlive && whitePawnsList.at(i)->pawn->scenePos() == event)
+            return true;
+    }
+    return false;
 }
 
 //Check for legitmate move
@@ -218,14 +254,9 @@ bool GameScene::checkMove(QGraphicsSceneMouseEvent *event){
     //Not a field
     if (item->type() != rectType.type())
             return false;
-    /*else {
+    else if (pawnInField(item->scenePos()))
         //There's a pawn in the field
-        for (int i = 0 ; i < blackPawnsList.size() ; i++) {
-            if ((blackPawnsList.at(i)->pawn->scenePos() == item->scenePos())
-                 || (whitePawnsList.at(i)->pawn->scenePos() == item->scenePos()))
-                return false;
-
-    }*/
+        return false;
     if (this->whitePlayerMove) {
         //If it's a valid nearbyfield
         if (((item->x() - this->currentlySelectedPawn->x() == ELEMENTSIZE)
@@ -277,6 +308,8 @@ Pawn* GameScene::checkJump(QGraphicsSceneMouseEvent *event){
     QGraphicsEllipseItem ellipseType;
     if (item->type() != rectType.type())
             return NULL;
+    else if (pawnInField(item->scenePos()))
+        return NULL;
     if(this->whitePlayerMove){
     //There's a black pawn up & right
         if  ((item->x() - this->currentlySelectedPawn->x() == DISTANCE)
@@ -374,6 +407,7 @@ Pawn* GameScene::checkJumpKing(QGraphicsSceneMouseEvent *event){
 void GameScene::move(QGraphicsSceneMouseEvent *event){
     QGraphicsItem *item = itemAt(event->scenePos(), QTransform::fromScale(1, 1));
         this->currentlySelectedPawn->setPos(item->x(),item->y());
+        CheckIfKing(); //Check if there's any pawn reaching the other side
         ResetPawn();
         this->whitePlayerMove = !this->whitePlayerMove;
         return;
@@ -382,8 +416,9 @@ void GameScene::move(QGraphicsSceneMouseEvent *event){
 void GameScene::jump(QGraphicsSceneMouseEvent *event){
     QGraphicsItem *item = itemAt(event->scenePos(), QTransform::fromScale(1, 1));
         this->currentlySelectedPawn->setPos(item->x(),item->y());
-        ResetPawn();
-        this->whitePlayerMove = !this->whitePlayerMove;
+        CheckIfKing(); //Check if there's any pawn reaching the other side
+        //ResetPawn();
+        //this->whitePlayerMove = !this->whitePlayerMove;
         return;
 }
 
@@ -405,6 +440,69 @@ bool GameScene::pawnIsKing(){
                     return true;
             }
         }
+    }
+    return false;
+}
+
+bool GameScene::checkDoubleJump(){
+    if(this->whitePlayerMove){
+    //There's a black pawn up & right
+        for (int i = 0 ; i < blackPawnsList.size() ; i++) {
+            Pawn *black = blackPawnsList.at(i);
+            if  ((black->pawn->x() - this->currentlySelectedPawn->x() == ELEMENTSIZE)
+                      && (black->pawn->y() - this->currentlySelectedPawn->y()  == -ELEMENTSIZE)){
+                QPointF p;
+                p.setX(this->currentlySelectedPawn->x()+DISTANCE);
+                p.setY(this->currentlySelectedPawn->y()-DISTANCE);
+                if (!pawnInField(p)){
+                    if ((this->currentlySelectedPawn->x()+DISTANCE < 8*ELEMENTSIZE) && (this->currentlySelectedPawn->y()-DISTANCE >= 0))
+                    return true;
+                }
+            }
+            else if  ((black->pawn->x() - this->currentlySelectedPawn->x() == -ELEMENTSIZE)
+                      && (black->pawn->y() - this->currentlySelectedPawn->y()  == -ELEMENTSIZE)){
+                QPointF p;
+                p.setX(this->currentlySelectedPawn->x()-DISTANCE);
+                p.setY(this->currentlySelectedPawn->y()-DISTANCE);
+                if (!pawnInField(p)){
+                    if ((this->currentlySelectedPawn->x()-DISTANCE >= 0) && (this->currentlySelectedPawn->y()-DISTANCE >= 0))
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    return false;
+}
+
+bool GameScene::checkDoubleJumpKing(){
+    if(this->whitePlayerMove){
+        if (checkDoubleJump())
+            return true;
+        for (int i = 0 ; i < blackPawnsList.size() ; i++) {
+            Pawn *black = blackPawnsList.at(i);
+            if  ((black->pawn->x() - this->currentlySelectedPawn->x() == ELEMENTSIZE)
+                      && (black->pawn->y() - this->currentlySelectedPawn->y()  == ELEMENTSIZE)){
+                QPointF p;
+                p.setX(this->currentlySelectedPawn->x()+DISTANCE);
+                p.setY(this->currentlySelectedPawn->y()-DISTANCE);
+                if (!pawnInField(p)){
+                    if ((this->currentlySelectedPawn->x()+DISTANCE < 8*ELEMENTSIZE) && (this->currentlySelectedPawn->y()-DISTANCE < 8*ELEMENTSIZE))
+                    return true;
+                }
+            }
+            else if  ((black->pawn->x() - this->currentlySelectedPawn->x() == -ELEMENTSIZE)
+                      && (black->pawn->y() - this->currentlySelectedPawn->y()  == ELEMENTSIZE)){
+                QPointF p;
+                p.setX(this->currentlySelectedPawn->x()-DISTANCE);
+                p.setY(this->currentlySelectedPawn->y()-DISTANCE);
+                if (!pawnInField(p)){
+                    if ((this->currentlySelectedPawn->x()-DISTANCE >= 0) && (this->currentlySelectedPawn->y()-DISTANCE < 8*ELEMENTSIZE))
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     return false;
 }
