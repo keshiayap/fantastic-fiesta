@@ -11,6 +11,7 @@
 #include <QList>
 #include <QLabel>
 #include <pawn.h>
+#include "log.h"
 //#include <whiteplayer.h>
 
 class GameScene : public QGraphicsScene
@@ -36,9 +37,9 @@ class GameScene : public QGraphicsScene
     void ResetPawn();
     //void Moves(QGraphicsSceneMouseEvent *event, int numX, int numY);
     bool checkMove(QGraphicsSceneMouseEvent *event);
-    void move(QGraphicsSceneMouseEvent *event);
+    void move(QPointF event);
     Pawn* checkJump(QGraphicsSceneMouseEvent *event);
-    void jump(QGraphicsSceneMouseEvent *event);
+    void jump(QPointF event);
     bool checkMoveKing(QGraphicsSceneMouseEvent *event);
     Pawn* checkJumpKing(QGraphicsSceneMouseEvent *event);
     bool pawnIsKing();
@@ -46,6 +47,12 @@ class GameScene : public QGraphicsScene
     bool checkDoubleJump();
     bool changeAllowed;
     bool checkDoubleJumpKing();
+    void pawnToMove(coordinate a);
+    void moveComp(coordinate a);
+    void takeIn(coordinate *pos);
+    void compTurn();
+
+
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

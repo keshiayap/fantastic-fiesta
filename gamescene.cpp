@@ -1,4 +1,6 @@
 #include "gamescene.h"
+#include "log.h"
+#include "math.h"
 #include <memory>
 #include <QDebug>
 #define ELEMENTSIZE 60
@@ -144,14 +146,14 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     //Pawn is selected
     else if (pawnIsKing()) {
         if (checkMoveKing(event)) {
-            move(event);
+            move(event->scenePos());
             return;
         }
         else if (checkJumpKing(event) != NULL){
             Pawn* eaten = checkJumpKing(event);
             //removeItem(eaten->pawn);
             eaten->dead();
-            jump(event);
+            move(event->scenePos());
             if (checkDoubleJumpKing()){
                 changeAllowed = false;
             }
@@ -164,7 +166,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
     else {
         if (checkMove(event)){
-            move(event);
+            move(event->scenePos());
             return;
         }
         //Jump
@@ -173,7 +175,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             //removeItem(eaten->pawn);
             eaten->dead();
             //eaten->pawn->setPos(ELEMENTSIZE*9, ELEMENTSIZE * 4 );
-            jump(event);
+            move(event->scenePos());
             if (checkDoubleJump()){
                 changeAllowed = false;
             }
@@ -405,18 +407,18 @@ Pawn* GameScene::checkJumpKing(QGraphicsSceneMouseEvent *event){
 }
 
 
-void GameScene::move(QGraphicsSceneMouseEvent *event){
-    QGraphicsItem *item = itemAt(event->scenePos(), QTransform::fromScale(1, 1));
-        this->currentlySelectedPawn->setPos(item->x(),item->y());
+void GameScene::move(QPointF p){
+    //QGraphicsItem *item = itemAt(event->scenePos(), QTransform::fromScale(1, 1));
+        this->currentlySelectedPawn->setPos(p.rx(),p.ry());
         CheckIfKing(); //Check if there's any pawn reaching the other side
         ResetPawn();
         this->whitePlayerMove = !this->whitePlayerMove;
         return;
 }
 
-void GameScene::jump(QGraphicsSceneMouseEvent *event){
-    QGraphicsItem *item = itemAt(event->scenePos(), QTransform::fromScale(1, 1));
-        this->currentlySelectedPawn->setPos(item->x(),item->y());
+void GameScene::jump(QPointF p){
+    //QGraphicsItem *item = itemAt(event->scenePos(), QTransform::fromScale(1, 1));
+        this->currentlySelectedPawn->setPos(p.rx(),p.ry());
         CheckIfKing(); //Check if there's any pawn reaching the other side
         //ResetPawn();
         //this->whitePlayerMove = !this->whitePlayerMove;
@@ -510,4 +512,38 @@ bool GameScene::checkDoubleJumpKing(){
         return false;
     }
     return false;
+}
+
+void GameScene::pawnToMove(coordinate a){
+    for (int i = 0 ; i < blackPawnsList.size() ; i++) {
+        Pawn *black = blackPawnsList.at(i);
+        if (black->pawn->x() == a.row*ELEMENTSIZE && black->pawn->y() == a.col*ELEMENTSIZE)
+            this->currentlySelectedPawn = black->pawn;
+    }
+}
+
+void GameScene::moveComp(coordinate a){
+    QPointF p;
+    p.setX(a.row*ELEMENTSIZE);
+    p.setY(a.col*ELEMENTSIZE);
+    if (abs(a.row - currentlySelectedPawn->x()/ELEMENTSIZE) == ELEMENTSIZE){
+        move(p);
+    }
+    else {
+        jump(p);
+    }
+}
+
+void GameScene::takeIn(coordinate *pos){
+    pawnToMove(pos[0]);
+    moveComp(pos[1]);
+}
+
+/*void GameScene::updateBoard(){
+
+}*/
+
+void GameScene::compTurn(){
+
+    this->whitePlayerMove = !this->whitePlayerMove;
 }
