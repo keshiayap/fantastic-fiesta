@@ -63,7 +63,11 @@ Board *copyBoard(Board *board) {
 }
 
 // make a legit move
-void updateBoard(Board *board, coordinate curr, coordinate next, char player, bool jump) {
+void updateBoard(Board *board, coordinate curr, coordinate next, char player) {
+  bool jump = 0;
+  if (curr.row - next.row == 1 || curr.row - next.col == -1)
+    jump = 1;
+  
   // must check if turn is legit first somewhere else
   if (jump) {
     int enemyR = (curr.row + next.row)/2;

@@ -55,7 +55,7 @@ typedef struct Node {
 void check_null(void *ptr, char const *msg);
 Board *init_board(int COMPUTER = 12*3, int USER = 12*3); // construct new board, default parameters
 Board *copyBoard(Board *board); // duplicate
-void updateBoard(Board *board, coordinate curr, coordinate next, char player, bool jump);
+void updateBoard(Board *board, coordinate curr, coordinate next, char player);
 /* void flip(Board *board); // reverse direction (change turn) */
 void toString(Board *board); // print to stdout
 
@@ -76,8 +76,8 @@ void print_tree(Node *t, char *tab, int depth); // prints tree using preorder tr
 // ai.cpp intelligence functions
 int size(coordinate **list);
 bool isEmpty(coordinate **list);
-coordinate *makeRandomMove(Board board, char player);
-Node *buildTree(Board board, coordinate *move, int depth, char player, bool jump);
-int minimax(Node *t, int depth, bool isMaximizingPlayer, int alpha, int beta, coordinate *bestMove);
+coordinate *makeRandomMove(Board *board, char player);
+Node *buildTree(Board *board, int depth, char player);
+int minimax(Node *t, int depth, bool isMaximizingPlayer, int alpha, int beta);
 
 #endif

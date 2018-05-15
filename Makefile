@@ -12,12 +12,14 @@ node.o: node.cpp
 ai.o: ai.cpp
 	g++ -std=c++0x -Wall -c ai.cpp
 
+main.o: main_ai.cpp
+	g++ -std=c++0x -Wall -c main_ai.cpp
 
-log.o: board.cpp checkmove.cpp node.cpp ai.cpp
-	g++ -std=c++0x -Wall -c board.cpp checkmove.cpp node.cpp ai.cpp
+#main: board.cpp checkmove.cpp node.cpp ai.cpp main_ai.cpp
+#	g++ -std=c++0x -Wall board.cpp checkmove.cpp node.cpp ai.cpp main_ai.cpp
 
-main: log.o main_ai.cpp
-	g++ -std=c++0x -Wall -o main main_ai.cpp log.o
+main: board.o checkmove.o  node.o ai.o main_ai.o
+	g++ -std=c++0x -Wall board.o checkmove.o  node.o ai.o main_ai.o
 
 clean:
 	rm *.o main

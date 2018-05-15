@@ -17,14 +17,18 @@ bool isEmpty(coordinate **list) {
 }
 
 coordinate *makeRandomMove(Board *board, char player) {
+  // jumps preferred
   coordinate **list = getJumps(board, player);
   if (isEmpty(list))
     list = getMoves(board, player);
+  if (isEmpty(list)) // list of possible moves  still empty
+    return (coordinate *) NULL;
+  
   int r = rand() % size(list);
   return list[r];
 }
     
-Node *buildTree(Board *board, coordinate *move, int depth, int player, bool jump) {
+Node *buildTree(Board *board, int depth, int player) {
   Node *t = init_node(board);
  
   if (depth == 0) { // leaf, so update value and return node
@@ -32,12 +36,10 @@ Node *buildTree(Board *board, coordinate *move, int depth, int player, bool jump
     return t;
   }
   else {
-    // only consider jumps if possible
+    // find list of possible moves; prefer jumps if available
     t->list = getJumps(board, player); 
-    bool jump = true;
     if (isEmpty(t->list)) { // no possible jumps
       t->list = getMoves(board, player);
-      jump = false;
     } 
     if (isEmpty(t->list)) // if there are still no possible  moves,
       return (Node *)  NULL; // skip turn
@@ -50,10 +52,10 @@ Node *buildTree(Board *board, coordinate *move, int depth, int player, bool jump
     // recur on each possible move - make children nodes
     for (int i = 0; i < num; i++) {
       Board *newboard = copyBoard(board);
-      updateBoard(newboard, move[0], move[1], player, jump);
+      updateBoard(newboard, t->list[i][0], t->list[i][1], player);
       
       // create child node and add to t->children
-      (t->children)[i] = buildTree(newboard, t->list[i], depth-1, -player, jump);
+      (t->children)[i] = buildTree(newboard, depth-1, -player);
     }
   } 
   return t;
