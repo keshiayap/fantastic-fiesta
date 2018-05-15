@@ -37,7 +37,7 @@ typedef struct Board {
   
 // node structure for minimax tree
 typedef struct Node {
-  Board board;
+  Board *board;
   struct Node **children; // array of either pieces that can jump (preferred), or just move
   coordinate **list;
   coordinate *bestMove;
