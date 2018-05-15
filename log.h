@@ -67,6 +67,7 @@ bool canMove(Board *board, int player, int r1, int c1, int r2, int c2);
 bool canJump(Board *board, int player, int r1, int c1, int r2, int c2);
 coordinate **getMoves(Board *board, int player);
 coordinate **getJumps(Board *board, int player);
+void print_move(coordinate* move);
 
 // node.cpp functions
 Node *init_node(Board *board); // initialize tree node

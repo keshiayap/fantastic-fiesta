@@ -3,7 +3,7 @@
 
 int main() {
   // create board
-  static Board *board = init_board();
+  static Board *board = init_board(12*3, 12*3);
   static int player = U;   // user starts first
   coordinate *userMove;
   coordinate *compMove;
@@ -15,7 +15,8 @@ int main() {
     if (player == U) {
       // user makes random move
       userMove = makeRandomMove(board, player);
-
+      print_move(userMove);
+      
       // if there is no available move, skip turn
       if (userMove != NULL)
 	updateBoard(board, userMove[0], userMove[1], player);
@@ -24,7 +25,9 @@ int main() {
       // computer follows using minimax algorithm
       tree = buildTree(board, DEPTH, player);
       compMove = tree->bestMove;
-
+      print_tree(tree, "    ", DEPTH); 
+      print_move(compMove);
+      
       // if there is no available move, skip turn
       if (compMove != NULL)
 	updateBoard(board, compMove[0], compMove[1], player);

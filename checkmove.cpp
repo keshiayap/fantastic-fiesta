@@ -145,3 +145,7 @@ coordinate **getJumps(Board *board, int player) {
   }
   return list;
 }
+
+void print_move(coordinate* move) {
+  cout << "Piece (%d, %d) moved to (%d, %d)" << move[0].row << move[0].col << move[1].row << move[1].col << endl;
+}
