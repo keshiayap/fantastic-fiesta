@@ -28,7 +28,7 @@ GameScene::GameScene(QLabel * moveInfoLabel)
     SetChessboard(this);
     SetPawns(this);
     this->changeAllowed = true;
-    //Moves(itemAt(this->scenePos(), QTransform::fromScale(1, 1)),60,60);
+    this->board  = init_board();
 }
 
 //Draw a pawn
@@ -147,19 +147,21 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     else if (pawnIsKing()) {
         if (checkMoveKing(event)) {
             move(event->scenePos());
+            //compTurn();
             return;
         }
         else if (checkJumpKing(event) != NULL){
             Pawn* eaten = checkJumpKing(event);
             //removeItem(eaten->pawn);
             eaten->dead();
-            move(event->scenePos());
+            jump(event->scenePos());
             if (checkDoubleJumpKing()){
                 changeAllowed = false;
             }
             else{
                 ResetPawn();
                 this->whitePlayerMove = !this->whitePlayerMove;
+                //compTurn();
             }
             return;
         }
@@ -167,6 +169,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     else {
         if (checkMove(event)){
             move(event->scenePos());
+            //compTurn();
             return;
         }
         //Jump
@@ -175,13 +178,14 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             //removeItem(eaten->pawn);
             eaten->dead();
             //eaten->pawn->setPos(ELEMENTSIZE*9, ELEMENTSIZE * 4 );
-            move(event->scenePos());
+            jump(event->scenePos());
             if (checkDoubleJump()){
                 changeAllowed = false;
             }
-            else{
+            else {
                 ResetPawn();
                 this->whitePlayerMove = !this->whitePlayerMove;
+                //compTurn();
             }
             return;
         }
@@ -408,8 +412,8 @@ Pawn* GameScene::checkJumpKing(QGraphicsSceneMouseEvent *event){
 
 
 void GameScene::move(QPointF p){
-    //QGraphicsItem *item = itemAt(event->scenePos(), QTransform::fromScale(1, 1));
-        this->currentlySelectedPawn->setPos(p.rx(),p.ry());
+    QGraphicsItem *item = itemAt(p, QTransform::fromScale(1, 1));
+        this->currentlySelectedPawn->setPos(item->x(),item->y());
         CheckIfKing(); //Check if there's any pawn reaching the other side
         ResetPawn();
         this->whitePlayerMove = !this->whitePlayerMove;
@@ -417,8 +421,8 @@ void GameScene::move(QPointF p){
 }
 
 void GameScene::jump(QPointF p){
-    //QGraphicsItem *item = itemAt(event->scenePos(), QTransform::fromScale(1, 1));
-        this->currentlySelectedPawn->setPos(p.rx(),p.ry());
+    QGraphicsItem *item = itemAt(p, QTransform::fromScale(1, 1));
+        this->currentlySelectedPawn->setPos(item->x(),item->y());
         CheckIfKing(); //Check if there's any pawn reaching the other side
         //ResetPawn();
         //this->whitePlayerMove = !this->whitePlayerMove;
@@ -515,9 +519,11 @@ bool GameScene::checkDoubleJumpKing(){
 }
 
 void GameScene::pawnToMove(coordinate a){
+    QPointF *p = new QPointF(a.row*ELEMENTSIZE+30,a.col*ELEMENTSIZE+30);
+    QGraphicsItem *item= itemAt(*p, QTransform::fromScale(1, 1));
     for (int i = 0 ; i < blackPawnsList.size() ; i++) {
         Pawn *black = blackPawnsList.at(i);
-        if (black->pawn->x() == a.row*ELEMENTSIZE && black->pawn->y() == a.col*ELEMENTSIZE)
+        if (black->pawn->pos() == item->pos())
             this->currentlySelectedPawn = black->pawn;
     }
 }
@@ -526,10 +532,17 @@ void GameScene::moveComp(coordinate a){
     QPointF p;
     p.setX(a.row*ELEMENTSIZE);
     p.setY(a.col*ELEMENTSIZE);
-    if (abs(a.row - currentlySelectedPawn->x()/ELEMENTSIZE) == ELEMENTSIZE){
+    if (abs(a.row*ELEMENTSIZE - this->currentlySelectedPawn->x()) == ELEMENTSIZE){
         move(p);
     }
     else {
+        for (int i = 0 ; i < whitePawnsList.size() ; i++) {
+            Pawn *white = whitePawnsList.at(i);
+            if (white->pawn->x() == (this->currentlySelectedPawn->x() + p.rx())/2) {
+                if (white->pawn->y() == (this->currentlySelectedPawn->y() + p.ry())/2)
+                    whitePawnsList.at(i)->dead();
+            }
+        }
         jump(p);
     }
 }
@@ -539,11 +552,65 @@ void GameScene::takeIn(coordinate *pos){
     moveComp(pos[1]);
 }
 
-/*void GameScene::updateBoard(){
+void GameScene::updateBoard(Board *b){
+    for (int i =0; i< 8; i++){
+        for (int j = 0; j<8; j++){
+            b->board[i][j] = '-';
+        }
+    }
+    for (int i = 0 ; i < whitePawnsList.size() ; i++) {
+        Pawn *white = whitePawnsList.at(i);
+        if (white->isAlive) {
+            int m = (white->pawn->x())/ELEMENTSIZE;
+            int n = (white->pawn->y())/ELEMENTSIZE;
+            if (white->isKing)
+                b->board[m][n] = 'U';
+            else
+                b->board[m][n] = 'u';
+        }
+    }
+    for (int i = 0 ; i < blackPawnsList.size() ; i++) {
+        Pawn *black = blackPawnsList.at(i);
+        if (black->isAlive) {
+            int m = (black->pawn->x())/ELEMENTSIZE;
+            int n = (black->pawn->y())/ELEMENTSIZE;
+            if (black->isKing)
+                b->board[m][n] = 'C';
+            else
+                b->board[m][n] = 'c';
+        }
+    }
 
-}*/
+}
 
 void GameScene::compTurn(){
+    // create board
+      //static Board *board = init_board(12*3, 12*3);
+      char player = 'c';   // user starts first
+      //coordinate *userMove;
+      coordinate *compMove;
+      Node *tree;
+      int DEPTH = 3;
+      updateBoard(this->board);
+    // computer follows using minimax algorithm
+          Board *newboard = copyBoard(board);
+          tree = buildTree(newboard, DEPTH, player);
+          minimax(tree, DEPTH, true, INT_MIN, INT_MAX);
+          compMove = tree->bestMove;
 
+          // if there is no available move, skip turn
+          //if (compMove != NULL)
+
+
+          /*cout << endl << "Computer move: " << endl << "    ";
+          print_move(compMove);
+          cout << endl;
+          toString(board, 0);*/
+
+          free_tree(tree);
+          //player = 'u';
+          takeIn(compMove);
     this->whitePlayerMove = !this->whitePlayerMove;
+     // }
+    //}
 }

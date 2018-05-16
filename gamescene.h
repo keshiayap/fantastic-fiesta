@@ -10,7 +10,7 @@
 #include <vector>
 #include <QList>
 #include <QLabel>
-#include <pawn.h>
+#include "pawn.h"
 #include "log.h"
 //#include <whiteplayer.h>
 
@@ -51,6 +51,8 @@ class GameScene : public QGraphicsScene
     void moveComp(coordinate a);
     void takeIn(coordinate *pos);
     void compTurn();
+    void updateBoard(Board *board);
+    Board *board;
 
 
 
