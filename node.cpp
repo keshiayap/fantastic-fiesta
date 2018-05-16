@@ -12,8 +12,14 @@ Node *init_node(Board *board) {
 void free_tree(Node *t) {
   for (int i = 0; i < t->numChildren; i++)
     free_tree(t->children[i]);
-  if (t != NULL)
+  if (t != NULL) {
+    free(t->board);
+    for (int i = 0; i < t->numChildren; i++) 
+      free(t->list[i]);
+    free(t->list);
     free(t);
+  }
+
 }
 
 // prints tree values using inorder traversal

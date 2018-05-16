@@ -15,6 +15,7 @@ ai.o: ai.cpp
 main_ai.o: main_ai.cpp
 	g++ -std=c++0x -Wall -c main_ai.cpp
 
+main: 
 main: board.o checkmove.o  node.o ai.o main_ai.o
 	g++ -std=c++0x -Wall -o main board.o checkmove.o  node.o ai.o main_ai.o
 
