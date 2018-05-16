@@ -15,10 +15,6 @@
 #include <string>
 
 using namespace std;
-#define C 1 // computer regular piece
-#define CK 2 // computer king piece
-#define U -1 // user regular piece
-#define UK -2 // user king piece
 
 /* ------------------------------------------ */
 /* -----------------STRUCTS------------------ */
@@ -35,12 +31,6 @@ typedef struct Board {
   int COMPUTER, USER; // # of pieces at start of a game
   char board[8][8];
 } Board;
-
-/* char[8][8] getBoard(Board *board); */
-/* int getC(Board *board); */
-/* int getU(Board *board); */
-/* void setC(Board *board, int COMPUTER); */
-/* void setU(Board *board, int USER); */
 
 // node structure for minimax tree
 typedef struct Node {
@@ -62,18 +52,18 @@ typedef struct Node {
 void check_null(void *ptr, char const *msg);
 Board *init_board(int COMPUTER = 12*3, int USER = 12*3); // construct new board, default parameters
 Board *copyBoard(Board *board); // duplicate
-void updateBoard(Board *board, coordinate curr, coordinate next, int player);
-/* void flip(Board *board); // reverse direction (change turn) */
+void updateBoard(Board *board, coordinate curr, coordinate next, char player);
 void toString(Board *board); // print to stdout
+/* void flip(Board *board); // reverse direction (change turn) */
 
 // checkmove.cpp move functions
 bool isEmpty(void **ptr);
 coordinate init(int a, int b);
 coordinate *buildMove(int r1, int c1, int r2, int c2);
-bool canMove(Board *board, int player, int r1, int c1, int r2, int c2);
-bool canJump(Board *board, int player, int r1, int c1, int r2, int c2);
-coordinate **getMoves(Board *board, int player);
-coordinate **getJumps(Board *board, int player);
+bool canMove(Board *board, char player, int r1, int c1, int r2, int c2);
+bool canJump(Board *board, char player, int r1, int c1, int r2, int c2);
+coordinate **getMoves(Board *board, char player);
+coordinate **getJumps(Board *board, char player);
 void print_move(coordinate* move);
 
 // node.cpp functions

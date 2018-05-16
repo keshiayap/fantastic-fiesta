@@ -28,21 +28,21 @@ coordinate *buildMove(int r1, int c1, int r2, int c2) {
 }
 
 // check if player can move from (r1,c1) to (r2,c2)
-bool canMove(Board *board, int player, int r1, int c1, int r2, int c2) {
+bool canMove(Board *board, char player, int r1, int c1, int r2, int c2) {
     if (r2 < 0 || r2 >= 8 || c2 < 0 || c2 >= 8) {
         return false;
     }
     if (board->board[r2][c2] != '-') {
         return false; // there is already a pawn at (x2, y2)
     }
-    if (player == C) {
-        if (board->board[r1][c1] == C && r2 > r1) {
+    if (player == 'c') {
+      if (tolower(board->board[r1][c1]) == 'c' && r2 > r1) {
             return false; // can only move down
         }
         return true;
     }
     else {
-        if (board->board[r1][c1] == U && r2 < r1) {
+      if (tolower(board->board[r1][c1]) == 'u' && r2 < r1) {
             return false;
         }
         return true;
@@ -50,7 +50,7 @@ bool canMove(Board *board, int player, int r1, int c1, int r2, int c2) {
 }
 
 // check if player can jump from (r1,c1) to (r2,c2)
-bool canJump(Board *board, int player, int r1, int c1, int r2, int c2) {
+bool canJump(Board *board, char player, int r1, int c1, int r2, int c2) {
     int r3 = (r1 + r2)/2; // coordinates of what's in between the jump
     int c3 = (c1 + c2)/2;
     if (r2 < 0 || r2 >= 8 || c2 < 0 || c2 >= 8) {
@@ -59,26 +59,26 @@ bool canJump(Board *board, int player, int r1, int c1, int r2, int c2) {
     if (board->board[r2][c2] != '-') {
         return false; // there is already a pawn at (r2, c2)
     }
-    if (player == C) {
-        if (board->board[r1][c1] == C && r2 > r1) {
+    if (tolower(player) == 'c') {
+      if (tolower(board->board[r1][c1]) == 'c' && r2 > r1) {
             return false; // can only move down
         }
-        if (board->board[r3][c3] != U) // if the square in between not H then can't jump
+      if (board->board[r3][c3] == '-') // if the square in between not H then can't jump
             return false;
         return true;
     }
     else {
-        if (board->board[r1][c1] == U && r2 < r1) {
+      if (tolower(board->board[r1][c1]) == 'u' && r2 < r1) {
             return false;
         }
-        if (board->board[r3][c3] != C) // if the square in between not C then can't jump
+      if (board->board[r3][c3] == '-') // if the square in between not C then can't jump
             return false;
         return true;
     }
 }
 
 // return all possible moves for a player in an array
-coordinate **getMoves(Board *board, int player) {
+coordinate **getMoves(Board *board, char player) {
   // create list of possible moves; there are at most 2 moves for 12 pieces
   coordinate **list = (coordinate **) malloc(sizeof(coordinate *)*12*2);
   check_null(list, "Unable to allocate list for getMoves()");
@@ -88,7 +88,7 @@ coordinate **getMoves(Board *board, int player) {
   // loop through the whole board 
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
-      if (board->board[row][col] == player) {
+      if (tolower(board->board[row][col]) == player) {
 	if (canMove(board, player, row, col, row+1, col+1)) {
 	  list[i] = buildMove(row, col, row+1, col+1);
 	  i++;
@@ -112,7 +112,7 @@ coordinate **getMoves(Board *board, int player) {
 }
 
 // return all possible jumps for a player in an array
-coordinate **getJumps(Board *board, int player) {
+coordinate **getJumps(Board *board, char player) {
   // create list of possible moves; there are at most 2 jumps for 12 pieces
   // each piece only allowed to make one jump!
   coordinate **list = (coordinate **) malloc(sizeof(coordinate *)*12*2);
@@ -123,7 +123,7 @@ coordinate **getJumps(Board *board, int player) {
   // loop through the whole board to check
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
-      if (board->board[row][col] == player) {
+      if (tolower(board->board[row][col]) == player) {
 	if (canJump(board, player, row, col, row+2, col+2)) {
 	  list[i] = buildMove(row, col, row+2, col+2);
 	  i++;

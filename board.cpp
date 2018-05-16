@@ -1,25 +1,5 @@
 #include "log.h"
 
-// char[8][8] getBoard(Board *board) {
-//   return board->board;
-// }
-
-// int getC(Board *board) {
-//   return board->COMPUTER;
-// }
-
-// int getU(Board *board) {
-//   return board->USER;
-// }
-
-// void setC(Board *board, int COMPUTER) {
-//   board->COMPUTER = COMPUTER;
-// }
-
-// void setU(Board *board, int USER) {
-//   board->USER = USER;
-// }
-
 // check if mallocs were done correctly
 void check_null(void *ptr, char const *msg) {
   if (ptr == NULL) {
@@ -36,32 +16,30 @@ Board *init_board(int COMPUTER, int USER) {
   check_null(board, "Unable to allocate board\n");
   board->COMPUTER = COMPUTER;
   board->USER = USER;
-  
+
   // initialize all as '-'
-  for (int i = 0; i < 8; i++) { 
-    for(int j = 0; j < 8; j++) 
+  for (int i = 0; i < 8; i++) {
+    for (int j = 0; j < 8; j++)
       board->board[i][j] = '-';
   }
-
-  // initialize user pieces
+  
+  // initialize computer pieces
   bool skip = true;
-  for (int i = 0; i < 3; i++) { 
-    for(int j = 0; j < 8; j++) {
-      if (!skip) {
-	board->board[i][j] = (char) C;
-      }
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 8; j++) {
+      if (!skip) 
+	board->board[i][j] = 'c';
       skip = !skip;
     }
     skip = !skip;
   }
-
-  // initialize computer pieces
+  
+  // initialize user pieces
   skip = false;
-  for (int i = 5; i < 8; i++) { 
-    for(int j = 0; j < 8; j++) {
-      if (!skip) {
-	board->board[i][j] = (char) U;
-      }
+  for (int i = 5; i < 8; i++) {
+    for (int j = 0; j < 8; j++) {
+      if (!skip)
+	board->board[i][j] = 'u';
       skip = !skip;
     }
     skip = !skip;
@@ -83,7 +61,7 @@ Board *copyBoard(Board *board) {
 }
 
 // make a legit move
-void updateBoard(Board *board, coordinate curr, coordinate next, int player) {
+void updateBoard(Board *board, coordinate curr, coordinate next, char player) {
   bool jump = 0;
   if (curr.row - next.row == 1 || curr.row - next.col == -1)
     jump = 1;
@@ -107,6 +85,20 @@ void updateBoard(Board *board, coordinate curr, coordinate next, int player) {
   // shift position of piece
   board->board[next.row][next.col] = board->board[curr.row][curr.col];
   board->board[curr.row][curr.col] = '-';
+
+  // make king if they reached the end
+  if (next.row == 0 || next.row == 7)
+    board->board[next.row][next.col] = toupper(board->board[next.row][next.col]);
+}
+
+
+// print to stdout
+void toString(Board *board) {
+  for (int i = 0; i < 8; i++) {
+    for (int j = 0; j < 8; j++) 
+      cout << board->board[i][j];
+    cout << endl;
+  }
 }
 
 // // reverse direction (change turn)
@@ -130,24 +122,3 @@ void updateBoard(Board *board, coordinate curr, coordinate next, int player) {
 //       board->board[i][j] = tempBoard[i-4][j-4];
 //   }
 // }
-
-// print to stdout
-void toString(Board *board) {
-  char display;
-  for (int i = 0; i < 8; i++) {
-    for (int j = 0; j < 8; j++) {
-      if (board->board[i][j] == C)
-	display = 'c';
-      else if (board->board[i][j] == CK)
-	display = 'C';
-      else if (board->board[i][j] == U)
-	display = 'u';
-      else if (board->board[i][j] == UK)
-	display = 'U';
-      else
-	display = '-';
-      cout << display;
-    }
-    cout << endl;
-  }
-}

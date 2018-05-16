@@ -28,7 +28,7 @@ coordinate *makeRandomMove(Board *board, char player) {
   return list[r];
 }
     
-Node *buildTree(Board *board, int depth, int player) {
+Node *buildTree(Board *board, int depth, char player) {
   Node *t = init_node(board);
  
   if (depth == 0) { // leaf, so update value and return node
@@ -53,6 +53,11 @@ Node *buildTree(Board *board, int depth, int player) {
     for (int i = 0; i < num; i++) {
       Board *newboard = copyBoard(board);
       updateBoard(newboard, t->list[i][0], t->list[i][1], player);
+
+      if (tolower(player) == 'c')
+	player = 'u';
+      else
+	player = 'c';
       
       // create child node and add to t->children
       (t->children)[i] = buildTree(newboard, depth-1, -player);
