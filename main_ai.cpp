@@ -12,40 +12,49 @@ int main() {
 
   // Gameplay
   while (player != '-') {
+    // print current score tally
     cout << endl << "========================" << endl;
     cout << "COMPUTER: " << board->COMPUTER << " vs USER: " << board->USER << endl;
     cout <<  "========================" << endl;
+
+    // player makes move
     if (player == 'u') {
-      // user makes random move
-      userMove = makeRandomMove(board, player);
+      userMove = makeRandomMove(board, player); // user finds a random move to make
       
       // if there is no available move, skip turn
-      if (userMove != NULL)
-  	updateBoard(board, userMove[0], userMove[1], player);
-      cout << endl << "User move: " << endl << "    ";
-      print_move(userMove);
-      cout << endl;
-      toString(board, 0);
+      if (userMove != NULL) {
+  	updateBoard(board, userMove[0], userMove[1], player); // make move
+
+	// print updates
+	cout << endl << "User move: ";
+	print_move(userMove);
+	cout << endl << "Final board: " << endl;
+	toString(board, 0);
+      } else
+	cout << "User has no move. Skip. " << endl;
       
       player = 'c';
     }
     else {
       // computer follows using minimax algorithm
       Board *newboard = copyBoard(board);
-      tree = buildTree(newboard, DEPTH, player);
-      minimax(tree, DEPTH, true, INT_MIN, INT_MAX);
-      compMove = tree->bestMove;
+      tree = buildTree(newboard, DEPTH, player); // create tree of possible moves
+      if (tree != NULL) {       // if there is no available move, skip turn
+	minimax(tree, DEPTH, true, INT_MIN, INT_MAX); // find best move
+	compMove = tree->bestMove; 
+	updateBoard(board, compMove[0], compMove[1], player); // make best move
 
-      // if there is no available move, skip turn
-      if (compMove != NULL)
-  	updateBoard(board, compMove[0], compMove[1], player);
-
-      cout << endl << "Computer move: " << endl << "    ";
-      print_move(compMove);
-      cout << endl;
-      toString(board, 0);
+	// print updates
+	cout << endl << "Computer move: ";
+	print_move(compMove);
+	cout << endl << "Final board: " << endl;
+	toString(board, 0);
       
-      free_tree(tree);
+	free_tree(tree);
+      }
+      else {
+	cout << "Computer has no move. Skip. " << endl;
+      }
       player = 'u';
     }
     
