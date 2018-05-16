@@ -64,13 +64,14 @@ Board *copyBoard(Board *board) {
 // make a legit move
 void updateBoard(Board *board, coordinate curr, coordinate next, char player) {
   bool jump = 0;
-  if (curr.row - next.row == 2 || curr.row - next.col == -2)
+  if (curr.row - next.row == 2 || curr.row - next.row == -2)
     jump = 1;
-  
-  // must check if turn is legit first somewhere else
+ 
   if (jump) {
     int enemyR = (curr.row + next.row)/2;
     int enemyC = (curr.col + next.col)/2;
+
+    // cout << "Piece at (" << enemyR << ", " << enemyC << ") destroyed!" <<endl;
     
     int enemyPieceValue = 3; // assume normal piece was destroyed
     if (isupper(board->board[enemyR][enemyC]))

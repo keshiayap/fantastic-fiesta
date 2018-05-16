@@ -42,7 +42,7 @@ bool canMove(Board *board, char player, int r1, int c1, int r2, int c2) {
 bool canJump(Board *board, char player, int r1, int c1, int r2, int c2) {
     int r3 = (r1 + r2)/2; // coordinates of what's in between the jump
     int c3 = (c1 + c2)/2;
-    if (r2 < 0 || r2 >= 8 || c2 < 0 || c2 >= 8) {
+    if (r2 < 0 || r2 > 7 || c2 < 0 || c2 >= 7) {
         return false;
     }
     if (board->board[r2][c2] != '-') {
@@ -52,7 +52,7 @@ bool canJump(Board *board, char player, int r1, int c1, int r2, int c2) {
       if (tolower(board->board[r1][c1]) == 'c' && islower(board->board[r1][c1]) && r2 < r1) {
             return false; // can only move down
         }
-      if (board->board[r3][c3] != 'u') // if the square in between not H then can't jump
+      if (board->board[r3][c3] != 'u') // if the square in between not U then can't jump
             return false;
         return true;
     }
