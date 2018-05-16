@@ -32,8 +32,8 @@ typedef struct coordinate {
 
 // Board array and total player values
 typedef struct Board {
-  static int COMPUTER, USER; // # of pieces at start of a game
-  static char board[8][8];
+  int COMPUTER, USER; // # of pieces at start of a game
+  char board[8][8];
 } Board;
 
 /* char[8][8] getBoard(Board *board); */
