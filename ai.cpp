@@ -3,17 +3,17 @@
 #include "log.h"
 
 int size(coordinate **list) {
-  return *(&list + 1) - list;
+  int count = 0;
+  for (int i = 0; i < 24; i++) {
+    if (list[i] != NULL)
+      count++;
+  }
+  return count;
 }
 
 bool isEmpty(coordinate **list) {
   int num = size(list);
-  bool isempty = true;
-  for (int i = 0; i < num; i++) {
-    if (list[i] != NULL)
-      isempty = false;
-  }
-  return isempty;
+  return (num == 0);
 }
 
 coordinate *makeRandomMove(Board *board, char player) {
@@ -23,7 +23,7 @@ coordinate *makeRandomMove(Board *board, char player) {
     list = getMoves(board, player);
   if (isEmpty(list)) // list of possible moves  still empty
     return (coordinate *) NULL;
-  
+  srand(time(NULL));
   int r = rand() % size(list);
   return list[r];
 }

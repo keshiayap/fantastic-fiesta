@@ -57,7 +57,6 @@ void toString(Board *board); // print to stdout
 /* void flip(Board *board); // reverse direction (change turn) */
 
 // checkmove.cpp move functions
-bool isEmpty(void **ptr);
 coordinate init(int a, int b);
 coordinate *buildMove(int r1, int c1, int r2, int c2);
 bool canMove(Board *board, char player, int r1, int c1, int r2, int c2);

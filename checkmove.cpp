@@ -1,15 +1,5 @@
 #include "log.h"
 
-bool isEmpty(void **ptr) {
-  int num = *(&ptr + 1) - ptr;
-  bool isempty = true;
-  for (int i = 0; i < num; i++) {
-    if (ptr[i] != NULL)
-      isempty = false;
-  }
-  return isempty;
-}
-    
 // create a coordinate with x=a and y=b
 coordinate init(int a, int b) {
   coordinate tmp;
@@ -29,23 +19,22 @@ coordinate *buildMove(int r1, int c1, int r2, int c2) {
 
 // check if player can move from (r1,c1) to (r2,c2)
 bool canMove(Board *board, char player, int r1, int c1, int r2, int c2) {
-    if (r2 < 0 || r2 >= 8 || c2 < 0 || c2 >= 8) {
+  if (r2 < 0 || r2 >= 8 || c2 < 0 || c2 >= 8) {
         return false;
     }
     if (board->board[r2][c2] != '-') {
         return false; // there is already a pawn at (x2, y2)
     }
     if (player == 'c') {
-      if (tolower(board->board[r1][c1]) == 'c' && r2 > r1) {
+      if (tolower(board->board[r1][c1]) == 'c' && r2 < r1) {
             return false; // can only move down
         }
         return true;
     }
     else {
-      if (tolower(board->board[r1][c1]) == 'u' && r2 < r1) {
-            return false;
-        }
-        return true;
+      if (tolower(board->board[r1][c1]) == 'u' && r2 > r1) 
+	return false;
+      return true;
     }
 }
 
@@ -80,9 +69,9 @@ bool canJump(Board *board, char player, int r1, int c1, int r2, int c2) {
 // return all possible moves for a player in an array
 coordinate **getMoves(Board *board, char player) {
   // create list of possible moves; there are at most 2 moves for 12 pieces
-  coordinate **list = (coordinate **) malloc(sizeof(coordinate *)*12*2);
-  check_null(list, "Unable to allocate list for getMoves()");
-  memset(list, (int) NULL, sizeof(coordinate *)*12*2);
+  coordinate **list = new coordinate*[24];
+  for (int i = 0; i < 24; i++)
+    list[i] = (coordinate *) NULL;
   int i = 0;
 
   // loop through the whole board 
@@ -115,12 +104,13 @@ coordinate **getMoves(Board *board, char player) {
 coordinate **getJumps(Board *board, char player) {
   // create list of possible moves; there are at most 2 jumps for 12 pieces
   // each piece only allowed to make one jump!
-  coordinate **list = (coordinate **) malloc(sizeof(coordinate *)*12*2);
-  check_null(list, "Unable to allocate list for getJumps()");
-  memset(list, (int) NULL, sizeof(coordinate *)*12*2);
+  // create list of possible moves; there are at most 2 moves for 12 pieces
+  coordinate **list = new coordinate*[24];
+  for (int i = 0; i < 24; i++)
+    list[i] = (coordinate *) NULL;
   int i = 0;
 
-  // loop through the whole board to check
+    // loop through the whole board to check
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
       if (tolower(board->board[row][col]) == player) {
@@ -147,5 +137,5 @@ coordinate **getJumps(Board *board, char player) {
 }
 
 void print_move(coordinate* move) {
-  cout << "Piece (%d, %d) moved to (%d, %d)" << move[0].row << move[0].col << move[1].row << move[1].col << endl;
+  cout << "Piece (" << move[0].row << ", "  << move[0].col << ") can move to (" << move[1].row << ", " << move[1].col << ")" << endl;
 }

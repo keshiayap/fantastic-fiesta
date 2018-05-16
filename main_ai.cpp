@@ -10,43 +10,48 @@ int main() {
   Node *tree;
   int DEPTH = 3;
 
-  //toString(board);
-  //coordinate **list = getMoves(board, player);
-  
-  // // Gameplay
-  // while (player != '-') {
-  //   if (player == 'u') {
-  //     // user makes random move
-  //     userMove = makeRandomMove(board, player);
-  //     print_move(userMove);
-      
-  //     // if there is no available move, skip turn
-  //     if (userMove != NULL)
-  // 	updateBoard(board, userMove[0], userMove[1], player);
-  //   }
-  //   else {
-  //     // computer follows using minimax algorithm
-  //     tree = buildTree(board, DEPTH, player);
-  //     compMove = tree->bestMove;
-  //     print_tree(tree, 4, DEPTH); 
-  //     print_move(compMove);
-      
-  //     // if there is no available move, skip turn
-  //     if (compMove != NULL)
-  // 	updateBoard(board, compMove[0], compMove[1], player);
-  //   }
+  tree = buildTree(board, DEPTH, player);
+  compMove = tree->bestMove;
+  //  print_tree(tree, 4, DEPTH);
+  print_move(compMove);
 
-  //   // find if anyone won, return score and exit game
-  //   if (board->USER == 0) {
-  //     player = '-';
-  //     cout << "You lose :(" << endl;
-  //     exit(0);
-  //   }
-  //   if (board->COMPUTER == 0) {
-  //     player = '-';
-  //     cout << "You win! Pieces remaining: %d" << board->USER << endl;
-  //   }
-  // }
-  
+  /*
+  // Gameplay
+  while (player != '-') {
+    if (player == 'u') {
+      // user makes random move
+      userMove = makeRandomMove(board, player);
+      print_move(userMove);
+      
+      // if there is no available move, skip turn
+      if (userMove != NULL)
+  	updateBoard(board, userMove[0], userMove[1], player);
+    }
+    else {
+      // computer follows using minimax algorithm
+      tree = buildTree(board, DEPTH, player);
+      compMove = tree->bestMove;
+      print_tree(tree, 4, DEPTH); 
+      print_move(compMove);
+      
+      // if there is no available move, skip turn
+      if (compMove != NULL)
+  	updateBoard(board, compMove[0], compMove[1], player);
+    }
+
+    // find if anyone won, return score and exit game
+    if (board->USER == 0) {
+      player = '-';
+      cout << "You lose :(" << endl;
+      exit(0);
+    }
+    if (board->COMPUTER == 0) {
+      player = '-';
+      cout << "You win! Pieces remaining: %d" << board->USER << endl;
+    }
+  }
+  */
+  // free stuff
+  free(board);  
   return 0;
 }

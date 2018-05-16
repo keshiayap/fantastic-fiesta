@@ -12,8 +12,9 @@ void check_null(void *ptr, char const *msg) {
 Board *init_board(int COMPUTER, int USER) {
   // store values of pieces for each player
   // normal pieces worth 3 units, kings worth 5
-  Board *board = (Board *) malloc(sizeof(Board*));
+  Board *board = (Board *) malloc(sizeof(Board));
   check_null(board, "Unable to allocate board\n");
+
   board->COMPUTER = COMPUTER;
   board->USER = USER;
 
