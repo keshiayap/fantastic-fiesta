@@ -24,15 +24,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-    main.mm \
-    mainwindow.mm \
-    pawn.mm \
-    gamescene.mm
+    gamescene.cpp \
+    mainwindow.cpp \
+    pawn.cpp \
+    main.cpp \
+    ai.cpp \
+    board.cpp \
+    checkmove.cpp \
+    node.cpp
 
 HEADERS += \
         mainwindow.h \
     pawn.h \
-    gamescene.h
+    gamescene.h \
+    log.h
 
 FORMS += \
         mainwindow.ui
