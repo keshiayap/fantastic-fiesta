@@ -94,8 +94,10 @@ void updateBoard(Board *board, coordinate curr, coordinate next, char player) {
 
 
 // print to stdout
-void toString(Board *board) {
+void toString(Board *board, int tab) {
   for (int i = 0; i < 8; i++) {
+    for (int k = 0; k < tab; k++)
+      cout << " ";
     for (int j = 0; j < 8; j++) 
       cout << board->board[i][j];
     cout << endl;

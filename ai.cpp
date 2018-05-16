@@ -30,7 +30,7 @@ coordinate *makeRandomMove(Board *board, char player) {
     
 Node *buildTree(Board *board, int depth, char player) {
   Node *t = init_node(board);
- 
+     
   if (depth == 0) { // leaf, so update value and return node
     t->value = (board->COMPUTER) - (board->USER);
     return t;
@@ -47,7 +47,7 @@ Node *buildTree(Board *board, int depth, char player) {
     // find how many possible moves there are and create a child node for each
     int num = size(t->list);
     t->numChildren = num;
-    t->children = (Node **) malloc(sizeof(Node *) * num);
+    t->children = new Node*[num];
     
     // recur on each possible move - make children nodes
     for (int i = 0; i < num; i++) {
@@ -60,7 +60,7 @@ Node *buildTree(Board *board, int depth, char player) {
 	player = 'c';
       
       // create child node and add to t->children
-      (t->children)[i] = buildTree(newboard, depth-1, -player);
+      (t->children)[i] = buildTree(newboard, depth-1, player);
     }
   } 
   return t;
@@ -71,17 +71,18 @@ int minimax(Node *t, int depth, bool isMaximizingPlayer, int alpha, int beta) {
   if (depth == 0) // return difference in # of pieces
     return t->value;
 
-  int value, best;
+  int val, best;
   if (isMaximizingPlayer) {
     best = INT_MIN;
     t->alpha = alpha;
     
     // recur for all children
     for (int i = 0; i < t->numChildren; i++) {
-      value = minimax(t->children[i], depth-1, false, alpha, beta);
-      if (value > best)
-	best = value;
-      if (best > t->alpha) {
+      if ((t->children)[i]!=NULL)
+        val= minimax((t->children)[i], depth-1, false, alpha, beta);
+      if (val > best)
+	best = val;
+      if (best >= t->alpha) {
 	t->alpha = best;
 	t->bestMove = t->list[i]; // child that promises highest return value
       }
@@ -99,8 +100,9 @@ int minimax(Node *t, int depth, bool isMaximizingPlayer, int alpha, int beta) {
 
     // recur for all children
     for (int i = 0; i < t->numChildren; i++) {
-      value = minimax(t->children[i], depth-1, true, alpha, beta);
-      best = min(best, value);
+      if ((t->children)[i]!=NULL)
+	val = minimax((t->children)[i], depth-1, true, alpha, beta);
+      best = min(best, val);
       t->beta = min(t->beta, best);
 
       // Alpha Beta Pruning

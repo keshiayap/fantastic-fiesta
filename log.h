@@ -14,6 +14,11 @@
 #include <limits.h>
 #include <string>
 
+#undef INT_MIN
+#undef INT_MAX
+#define INT_MIN -12
+#define INT_MAX 12
+
 using namespace std;
 
 /* ------------------------------------------ */
@@ -53,7 +58,7 @@ void check_null(void *ptr, char const *msg);
 Board *init_board(int COMPUTER = 12*3, int USER = 12*3); // construct new board, default parameters
 Board *copyBoard(Board *board); // duplicate
 void updateBoard(Board *board, coordinate curr, coordinate next, char player);
-void toString(Board *board); // print to stdout
+void toString(Board *board, int tab); // print to stdout
 /* void flip(Board *board); // reverse direction (change turn) */
 
 // checkmove.cpp move functions

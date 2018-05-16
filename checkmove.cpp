@@ -48,19 +48,19 @@ bool canJump(Board *board, char player, int r1, int c1, int r2, int c2) {
     if (board->board[r2][c2] != '-') {
         return false; // there is already a pawn at (r2, c2)
     }
-    if (tolower(player) == 'c') {
-      if (tolower(board->board[r1][c1]) == 'c' && r2 > r1) {
+    if (player == 'c') {
+      if (tolower(board->board[r1][c1]) == 'c' && islower(board->board[r1][c1]) && r2 < r1) {
             return false; // can only move down
         }
-      if (board->board[r3][c3] == '-') // if the square in between not H then can't jump
+      if (board->board[r3][c3] != 'u') // if the square in between not H then can't jump
             return false;
         return true;
     }
     else {
-      if (tolower(board->board[r1][c1]) == 'u' && r2 < r1) {
+      if (tolower(board->board[r1][c1]) == 'u' && islower(board->board[r1][c1]) && r2 > r1) {
             return false;
         }
-      if (board->board[r3][c3] == '-') // if the square in between not C then can't jump
+      if (board->board[r3][c3] != 'c') // if the square in between not C then can't jump
             return false;
         return true;
     }
