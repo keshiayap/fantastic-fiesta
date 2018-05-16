@@ -64,7 +64,7 @@ Board *copyBoard(Board *board) {
 // make a legit move
 void updateBoard(Board *board, coordinate curr, coordinate next, char player) {
   bool jump = 0;
-  if (curr.row - next.row == 1 || curr.row - next.col == -1)
+  if (curr.row - next.row == 2 || curr.row - next.col == -2)
     jump = 1;
   
   // must check if turn is legit first somewhere else
@@ -77,19 +77,27 @@ void updateBoard(Board *board, coordinate curr, coordinate next, char player) {
       enemyPieceValue = 5; // king was destroyed
 	
     board->board[enemyR][enemyC] = '-'; // die
-    if (player < 0) // enemy loses one piece
+    if (player == 'u') // enemy loses one piece
       board->COMPUTER -= enemyPieceValue;
     else
       board->USER -= enemyPieceValue;
   }
     
+  // make king if they reached the end
+  if (next.row == 0 || next.row == 7) {
+    board->board[curr.row][curr.col] = toupper(board->board[curr.row][curr.col]);
+    if (islower(board->board[curr.row][curr.col])) {
+	if (player == 'u')
+	  board->USER +=2;
+	else
+	  board->COMPUTER +=2;
+      }
+  }
+
   // shift position of piece
   board->board[next.row][next.col] = board->board[curr.row][curr.col];
   board->board[curr.row][curr.col] = '-';
 
-  // make king if they reached the end
-  if (next.row == 0 || next.row == 7)
-    board->board[next.row][next.col] = toupper(board->board[next.row][next.col]);
 }
 
 

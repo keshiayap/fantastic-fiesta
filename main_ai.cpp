@@ -3,7 +3,7 @@
 
 int main() {
   // create board
-  static Board *board = init_board();
+  static Board *board = init_board(12*3, 12*3);
   char player = 'u';   // user starts first
   coordinate *userMove;
   coordinate *compMove;
@@ -12,17 +12,21 @@ int main() {
 
   // Gameplay
   while (player != '-') {
+    cout << endl << "========================" << endl;
+    cout << "COMPUTER: " << board->COMPUTER << " vs USER: " << board->USER << endl;
+    cout <<  "========================" << endl;
     if (player == 'u') {
       // user makes random move
       userMove = makeRandomMove(board, player);
-      cout << endl << "User move: " << endl << "    ";
-      print_move(userMove);
-      toString(board, 0);
       
       // if there is no available move, skip turn
       if (userMove != NULL)
   	updateBoard(board, userMove[0], userMove[1], player);
-
+      cout << endl << "User move: " << endl << "    ";
+      print_move(userMove);
+      cout << endl;
+      toString(board, 0);
+      
       player = 'c';
     }
     else {
@@ -31,14 +35,16 @@ int main() {
       tree = buildTree(newboard, DEPTH, player);
       minimax(tree, DEPTH, true, INT_MIN, INT_MAX);
       compMove = tree->bestMove;
-      cout << endl << "Computer move: " << endl << "    ";
-      print_move(compMove);
-      toString(board, 0);
-      
+
       // if there is no available move, skip turn
       if (compMove != NULL)
   	updateBoard(board, compMove[0], compMove[1], player);
 
+      cout << endl << "Computer move: " << endl << "    ";
+      print_move(compMove);
+      cout << endl;
+      toString(board, 0);
+      
       free_tree(tree);
       player = 'u';
     }
@@ -51,7 +57,7 @@ int main() {
     }
     if (board->COMPUTER == 0) {
       player = '-';
-      cout << "You win! Pieces remaining: %d" << board->USER << endl;
+      cout << "You win!" << endl;
     }
   }
 

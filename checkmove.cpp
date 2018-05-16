@@ -137,5 +137,5 @@ coordinate **getJumps(Board *board, char player) {
 }
 
 void print_move(coordinate* move) {
-  cout << "Piece (" << move[0].row << ", "  << move[0].col << ") can move to (" << move[1].row << ", " << move[1].col << ")" << endl;
+  cout << "Piece (" << move[0].row << ", "  << move[0].col << ") moved to (" << move[1].row << ", " << move[1].col << ")" << endl;
 }
