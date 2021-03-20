@@ -1,1 +1,1 @@
-# fantastic-fiesta
+# Checkers AI Bot
